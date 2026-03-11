@@ -6,7 +6,7 @@ import ResumeCard from "~/components/ResumeCard";
 export function meta({}: Route.MetaArgs) {
   return [
     { title: "Resum-inator" },
-    { name: "description", content: "Smart feed back for your cAreer!" },
+    { name: "description", content: "Smart feed back for your career!" },
   ];
 }
 
