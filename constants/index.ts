@@ -6,7 +6,7 @@ export const resumes: Resume[] = [
     id: "1",
     companyName: "Google",
     jobTitle: "Frontend Developer",
-    imagePath: "/images/resume-1.png",
+    imagePath: "/images/resume_01.png",
     resumePath: "/resumes/resume-1.pdf",
     feedback: {
       overallScore: 85,
@@ -36,7 +36,7 @@ export const resumes: Resume[] = [
     id: "2",
     companyName: "Microsoft",
     jobTitle: "Cloud Engineer",
-    imagePath: "/images/resume-2.png",
+    imagePath: "/images/resume_02.png",
     resumePath: "/resumes/resume-2.pdf",
     feedback: {
       overallScore: 55,
@@ -66,7 +66,98 @@ export const resumes: Resume[] = [
     id: "3",
     companyName: "Apple",
     jobTitle: "iOS Developer",
-    imagePath: "/images/resume-3.png",
+    imagePath: "/images/resume_03.png",
+    resumePath: "/resumes/resume-3.pdf",
+    feedback: {
+      overallScore: 75,
+      ATS: {
+        score: 90,
+        tips: [],
+      },
+      toneAndStyle: {
+        score: 90,
+        tips: [],
+      },
+      content: {
+        score: 90,
+        tips: [],
+      },
+      structure: {
+        score: 90,
+        tips: [],
+      },
+      skills: {
+        score: 90,
+        tips: [],
+      },
+    },
+  },
+
+   {
+    id: "4",
+    companyName: "Google",
+    jobTitle: "Frontend Developer",
+    imagePath: "/images/resume_01.png",
+    resumePath: "/resumes/resume-1.pdf",
+    feedback: {
+      overallScore: 85,
+      ATS: {
+        score: 90,
+        tips: [],
+      },
+      toneAndStyle: {
+        score: 90,
+        tips: [],
+      },
+      content: {
+        score: 90,
+        tips: [],
+      },
+      structure: {
+        score: 90,
+        tips: [],
+      },
+      skills: {
+        score: 90,
+        tips: [],
+      },
+    },
+  },
+  {
+    id: "5",
+    companyName: "Microsoft",
+    jobTitle: "Cloud Engineer",
+    imagePath: "/images/resume_02.png",
+    resumePath: "/resumes/resume-2.pdf",
+    feedback: {
+      overallScore: 55,
+      ATS: {
+        score: 90,
+        tips: [],
+      },
+      toneAndStyle: {
+        score: 90,
+        tips: [],
+      },
+      content: {
+        score: 90,
+        tips: [],
+      },
+      structure: {
+        score: 90,
+        tips: [],
+      },
+      skills: {
+        score: 90,
+        tips: [],
+      },
+    },
+  },
+  {
+    id: "6",
+    companyName: "Apple",
+    jobTitle: "iOS Developer",
+    imagePath: "/images/resume_03.png",
     resumePath: "/resumes/resume-3.pdf",
     feedback: {
       overallScore: 75,
@@ -148,14 +239,27 @@ export const prepareInstructions = ({
   AIResponseFormat: string;
 }) =>
   `You are an expert in ATS (Applicant Tracking System) and resume analysis.
-  Please analyze and rate this resume and suggest how to improve it.
-  The rating can be low if the resume is bad.
-  Be thorough and detailed. Don't be afraid to point out any mistakes or areas for improvement.
-  If there is a lot to improve, don't hesitate to give low scores. This is to help the user to improve their resume.
-  If available, use the job description for the job user is applying to to give more detailed feedback.
-  If provided, take the job description into consideration.
-  The job title is: ${jobTitle}
-  The job description is: ${jobDescription}
-  Provide the feedback using the following format: ${AIResponseFormat}
-  Return the analysis as a JSON object, without any other text and without the backticks.
-  Do not include any other text or comments.`;
+
+CRITICAL: The resume PDF is attached above. You MUST analyze the content of the attached resume file thoroughly.
+
+Task: Analyze and rate this resume for the following position:
+- Job Title: ${jobTitle}
+- Job Description: ${jobDescription}
+
+RATING CRITERIA (each score from 0-100):
+1. ATS Score: Rate how well the resume will pass through Applicant Tracking Systems. Look for: proper formatting, standard section headers, keyword optimization, no tables/columns/images.
+2. Tone and Style: Evaluate professional language, consistency, action verbs, and overall presentation.
+3. Content: Assess relevance to the job, specificity of achievements, quantified results, and alignment with job requirements.
+4. Structure: Judge organization, logical flow, appropriate section placement, and readability.
+5. Skills: Rate how well technical skills are highlighted and aligned with the job requirements.
+6. Overall Score: Calculate as the weighted average of the above scores, rounded to nearest integer.
+
+IMPORTANT INSTRUCTIONS:
+- Extract ALL text content from the attached resume PDF
+- Analyze against the provided job title and description
+- Provide specific, actionable feedback with concrete examples
+- Return VALID JSON matching this exact format: ${AIResponseFormat}
+- ALL numeric scores MUST be between 0-100
+- MUST include all fields (overallScore, ATS, toneAndStyle, content, structure, skills)
+- Return only the JSON object, no additional text or explanations
+- Do NOT include markdown formatting or backticks`;
