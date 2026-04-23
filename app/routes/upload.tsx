@@ -1,4 +1,4 @@
-import { prepareInstructions, AIResponseFormat } from 'constants';
+import { prepareInstructions, AIResponseFormat } from '../../constants';
 import {useState, type FormEvent} from 'react'
 import { useNavigate } from 'react-router';
 import FileUploader from '~/components/FileUploader';
@@ -47,7 +47,7 @@ const upload = () => {
             jobDescription,
             feedback: "",
         }
-        await kv.set("resume:${uuid}", JSON.stringify(data));
+        await kv.set(`resume:${uuid}`, JSON.stringify(data));
 
         setStatusText("Generating feedback...");
 
@@ -90,7 +90,7 @@ ${resumeText || "Unable to extract text from image. Please refer to the attached
         }
 
         data.feedback = feedbackData;
-        await kv.set("resume:${uuid}", JSON.stringify(data));
+        await kv.set(`resume:${uuid}`, JSON.stringify(data));
         setStatusText("Analysis complete!");
         console.log(data);
         navigate(`/resume/${uuid}`);

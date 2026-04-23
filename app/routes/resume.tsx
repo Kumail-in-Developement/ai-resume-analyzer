@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router';
+import { useNavigate, useParams, Link } from 'react-router';
 import ATS from '~/components/ATS';
 import Details from '~/components/Details';
 import Summary from '~/components/Summary';
@@ -15,16 +15,16 @@ const resume = () => {
     const {id} = useParams();
     const[imageUrl, setImageUrl] = useState('');
     const[resumeUrl, setResumeUrl] = useState('');
-    const[feedback, setFeedback] = useState<feedback | null>(null);
+    const[feedback, setFeedback] = useState<Feedback | null>(null);
     const navigate = useNavigate();
 
      useEffect(() => {
-        if(!isLoading && !auth.isAuthenticated) navigate('/auth?next=/resume${id');// Redirect to the auth page if the user is not authenticated
+        if(!isLoading && !auth.isAuthenticated) navigate(`/auth?next=/resume/${id}`);// Redirect to the auth page if the user is not authenticated
     }, [isLoading])
 
     useEffect(() => {
         const loadResume=async () => {
-            const resume=await kv.get('resume:${id}');
+            const resume=await kv.get(`resume:${id}`);
 
             if(!resume) return;
 
@@ -55,12 +55,12 @@ const resume = () => {
   return (
    <main className="!pt-0 ">
     <nav className="resume-nav">
-    <link to="/" className="back-button" >
+    <Link to="/" className="back-button" >
     <img src="/icons/back.svg" alt="logo" className="w-2.5 h-2.5"/>
     <span className="text-grey-800 text-sm font-semibold">
     Back to Home
     </span>
-    </link>
+    </Link>
     </nav>
     <div className="flex flex-row w-full max-lg:flex-col-reverse">
         <section className="feedback-section bg-[url('/images/bg-small.svg')] bg-cover h-[100vh] sticky top-0 items-center justify-center">
