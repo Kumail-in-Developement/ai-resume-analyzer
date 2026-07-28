@@ -1,11 +1,11 @@
 import Navbar from "~/components/Navbar";
 import type { Route } from "./+types/home";
-import { resumes } from "../../constants";
 import ResumeCard from "~/components/ResumeCard";
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router";
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router";
 import { usePuterStore } from "~/lib/puter";
-import resume from "./resume";
+
+
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -17,22 +17,50 @@ export function meta({}: Route.MetaArgs) {
 export default function Home() {
 
 
-    const { auth} = usePuterStore();
-
+    const { auth, kv, isLoading, puterReady } = usePuterStore();
     const navigate=useNavigate();
+    const[resumes,setResumes]=useState<Resume[]>([]);
+    const [loadingResumes,setLoadingResumes]=useState(true);
 
     useEffect(() => {
-        if(!auth.isAuthenticated) navigate('/auth?next=/');// Redirect to the auth page if the user is not authenticated
-    }, [auth.isAuthenticated])
-
-    useEffect(() => {
-      const loadResume: () => Promise<void> = async () => {
-        const blob : Blob = await fs.read(resume.imagePath);
-        if(!blob) return;
-        let url = URL.createObjectURL(blob);
+      if(!isLoading && !auth.isAuthenticated) {
+        navigate('/auth?next=/');
       }
+    }, [auth.isAuthenticated, isLoading, navigate]);
 
-    }, [])
+    useEffect(() => {
+      if (!puterReady || isLoading || !auth.isAuthenticated) return;
+
+      let cancelled = false;
+
+      const loadResumes: () => Promise<void> = async () => {
+        setLoadingResumes(true);
+        try {
+          const items = (await kv.list('resume:*', true)) as KVItem[] | undefined;
+          const parsedResumes = items?.flatMap((item) => {
+            try {
+              return [JSON.parse(item.value) as Resume];
+            } catch (error) {
+              console.error(`Failed to parse ${item.key}:`, error);
+              return [];
+            }
+          }) ?? [];
+
+          if (!cancelled) setResumes(parsedResumes);
+        } catch (error) {
+          console.error("Failed to load resumes:", error);
+        } finally {
+          if (!cancelled) setLoadingResumes(false);
+        }
+      };
+
+      loadResumes();
+
+      return () => {
+        cancelled = true;
+      };
+    }, [auth.isAuthenticated, isLoading, kv, puterReady]);
+
 
   return <main className="bg-[url('/images/bg-main.svg')] bg-cover">
 <Navbar />
@@ -40,12 +68,24 @@ export default function Home() {
     <section className="main-section">
       <div className="page-heading py-16">
         <h1>Track your Applications and Resume Ratings</h1>
+
+        {!loadingResumes && resumes.length===0 ? (
+          <h2>No Resumes found. Upload your first resume</h2>
+        ) : (
+          <h2>Review your submission and check AI powered feedback</h2>
+        )}
         <h2>Review submissions and check AI-powered feedback</h2>
       </div>
 
+      {loadingResumes && (
+        <div className="flex flex-col items-center justify-center">
+          <img src="/images/resume-scan-2.gif" className="w-[200px]"/>
+        </div>
+      )}
+
   
 
-  {resumes.length>0 &&(
+  {!loadingResumes && resumes.length>0 &&(
 
   <div className="resumes-section">
   {resumes.map( (resume) => (
@@ -53,6 +93,14 @@ export default function Home() {
   ))}
   </div>
 
+  )}
+
+  {!loadingResumes && resumes.length===0 && (
+    <div className="flex flex-col items-center mt-10 gap-4">
+      <Link to="/upload" className="primary-button w-fit text-xl font-semibold">
+      Upload Resume
+      </Link>
+    </div>
   )}
 
  </section>
