@@ -5,6 +5,7 @@ import ResumeCard from "~/components/ResumeCard";
 import { useEffect } from "react";
 import { useLocation, useNavigate } from "react-router";
 import { usePuterStore } from "~/lib/puter";
+import resume from "./resume";
 
 export function meta({}: Route.MetaArgs) {
   return [
@@ -24,6 +25,15 @@ export default function Home() {
         if(!auth.isAuthenticated) navigate('/auth?next=/');// Redirect to the auth page if the user is not authenticated
     }, [auth.isAuthenticated])
 
+    useEffect(() => {
+      const loadResume: () => Promise<void> = async () => {
+        const blob : Blob = await fs.read(resume.imagePath);
+        if(!blob) return;
+        let url = URL.createObjectURL(blob);
+      }
+
+    }, [])
+
   return <main className="bg-[url('/images/bg-main.svg')] bg-cover">
 <Navbar />
 
@@ -41,7 +51,6 @@ export default function Home() {
   {resumes.map( (resume) => (
     <ResumeCard key={resume.id} resume={resume}/>
   ))}
-
   </div>
 
   )}

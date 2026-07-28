@@ -1,8 +1,28 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router";
 import ScoreCircle from "~/components/ScoreCircle";
+import { usePuterStore } from "~/lib/puter";
+import resume from "~/routes/resume";
 
 
 const ResumeCard = ({resume : { id, companyName, jobTitle, feedback, imagePath }}:{resume : Resume}) => {
+
+
+      const [resumeUrl,setResumeUrl] = useState('');
+      const { fs } = usePuterStore();
+
+  useEffect(() => {
+      const loadResume: () => Promise<void> = async () => {
+        const blob = await fs.read(imagePath);
+        if(!blob) return;
+        let url = URL.createObjectURL(blob);
+        setResumeUrl(url);
+      }
+
+      loadResume();
+
+    }, [imagePath]);
+
   return (
     <Link to={`/resume/${id}`} className="resume-card animate-in fade-in duration-1000">
        
@@ -29,3 +49,7 @@ const ResumeCard = ({resume : { id, companyName, jobTitle, feedback, imagePath }
 }
 
 export default ResumeCard
+
+function setResumeUrl(url: string) {
+  throw new Error("Function not implemented.");
+}
